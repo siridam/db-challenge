@@ -25,15 +25,15 @@ DROP TABLE IF EXISTS USER_SCHEMA.USER CASCADE
 ;
 
 CREATE TABLE USER_SCHEMA.USER(
-	   LOGIN_ID              VARCHAR    
-	 , FNAME                 VARCHAR    NOT NULL
-	 , LNAME                 VARCHAR    NOT NULL
-	 , DOB                   DATE       NOT NULL
-	 , EMAIL_ID              VARCHAR    NOT NULL 
-	 , PASSWORD              VARCHAR    NOT NULL
-	 , IS_AUTHENTICATED      BOOLEAN  -- will be made active when user authenticates with the key generated
-	 , ACT_CREATE_DT         DATE
-	 , PWD_EXPIRY_DT         DATE
+       LOGIN_ID              VARCHAR    
+     , FNAME                 VARCHAR    NOT NULL
+     , LNAME                 VARCHAR    NOT NULL
+     , DOB                   DATE       NOT NULL
+     , EMAIL_ID              VARCHAR    NOT NULL 
+     , PASSWORD              VARCHAR    NOT NULL
+     , IS_AUTHENTICATED      BOOLEAN  -- will be made active when user authenticates with the key generated
+     , ACT_CREATE_DT         DATE
+     , PWD_EXPIRY_DT         DATE
 )
 ;
 
@@ -54,10 +54,10 @@ DROP TABLE IF EXISTS USER_SCHEMA.KEY CASCADE
 ;
 
 CREATE TABLE USER_SCHEMA.KEY(
-	   EMAIL_ID                   VARCHAR    
-	 , KEY                        VARCHAR           NOT NULL
-	 , CREATE_TIME                TIMESTAMPTZ       NOT NULL DEFAULT CURRENT_TIMESTAMP
-	 , EXPIRY_TIME                TIMESTAMPTZ       NOT NULL DEFAULT CURRENT_TIMESTAMP + INTERVAL '1 HOUR' 
+       EMAIL_ID                   VARCHAR    
+     , KEY                        VARCHAR           NOT NULL
+     , CREATE_TIME                TIMESTAMPTZ       NOT NULL DEFAULT CURRENT_TIMESTAMP
+     , EXPIRY_TIME                TIMESTAMPTZ       NOT NULL DEFAULT CURRENT_TIMESTAMP + INTERVAL '1 HOUR' 
 )
 ;
 
@@ -77,14 +77,14 @@ DROP TABLE IF EXISTS USER_SCHEMA.LOG_HISTORY CASCADE
 ;
 
 CREATE TABLE USER_SCHEMA.LOG_HISTORY(
-	   LOG_ID                     SERIAL PRIMARY KEY
+       LOG_ID                     SERIAL PRIMARY KEY
      , LOGIN_ID                   VARCHAR    NOT NULL
-	 , STATUS                     VARCHAR    NOT NULL
-	 , STATUS_CODE                INTEGER 
-	 , ERROR_DESCRIPTION          VARCHAR
-	 , SESSION_ID                 INTEGER
-	 , SESSION_START_TIME         TIMESTAMPTZ
-	 , SESSION_END_TIME           TIMESTAMPTZ
+     , STATUS                     VARCHAR    NOT NULL
+     , STATUS_CODE                INTEGER 
+     , ERROR_DESCRIPTION          VARCHAR
+     , SESSION_ID                 INTEGER
+     , SESSION_START_TIME         TIMESTAMPTZ
+     , SESSION_END_TIME           TIMESTAMPTZ
 )
 ;
 
@@ -123,7 +123,7 @@ INSERT INTO USER_SCHEMA.KEY ( EMAIL_ID
                 , CREATE_TIME   = CURRENT_TIMESTAMP
                 , EXPIRY_TIME   = CURRENT_TIMESTAMP + INTERVAL '1 HOUR'
             WHERE USER_SCHEMA.KEY.KEY    <> EXCLUDED.KEY;
-			
+            
 SELECT KEY INTO KEY_GENERATED FROM USER_SCHEMA.KEY WHERE EMAIL_ID = EMAIL;
 RETURN KEY_GENERATED;
 
@@ -139,39 +139,39 @@ GRANT EXECUTE ON FUNCTION USER_SCHEMA.F_GENERATE_KEY TO MASTER_RW;
 -----------------------------
 drop function if exists USER_SCHEMA.F_CREATE_USER;
 CREATE OR REPLACE FUNCTION USER_SCHEMA.F_CREATE_USER (
-	 LOGIN          varchar
+     LOGIN          varchar
    , FIRST_NAME     varchar
    , LAST_NAME      varchar
    , DATE_OF_BIRTH  date
    , EMAIL          varchar 
    , PASSWD         varchar
 )
-	RETURNS VARCHAR
+    RETURNS VARCHAR
 language plpgsql
-	as 
-	$$
-	DECLARE ACTIVATION_KEY VARCHAR;
+    as 
+    $$
+    DECLARE ACTIVATION_KEY VARCHAR;
 begin
-	 INSERT INTO USER_SCHEMA.USER ( LOGIN_ID
-					              , FNAME
-					              , LNAME
-					              , DOB
-					              , EMAIL_ID
-					              , PASSWORD
-					              )
-	 SELECT LOGIN           AS LOGIN_ID
-		  , FIRST_NAME      AS FNAME
-		  , LAST_NAME       AS LNAME
-		  , DATE_OF_BIRTH   AS DOB
-		  , EMAIL           AS EMAIL_ID
-		  , PASSWD          AS PASSWORD
-	  
+     INSERT INTO USER_SCHEMA.USER ( LOGIN_ID
+                                  , FNAME
+                                  , LNAME
+                                  , DOB
+                                  , EMAIL_ID
+                                  , PASSWORD
+                                  )
+     SELECT LOGIN           AS LOGIN_ID
+          , FIRST_NAME      AS FNAME
+          , LAST_NAME       AS LNAME
+          , DATE_OF_BIRTH   AS DOB
+          , EMAIL           AS EMAIL_ID
+          , PASSWD          AS PASSWORD
+      
   ON CONFLICT ON CONSTRAINT PK_USER DO NOTHING;
-			   
+               
 ACTIVATION_KEY = (select USER_SCHEMA.F_GENERATE_KEY(EMAIL));
 return ACTIVATION_KEY;
 end;
-$$;	
+$$; 
 
 GRANT EXECUTE ON FUNCTION USER_SCHEMA.F_CREATE_USER TO MASTER_RO;
 GRANT EXECUTE ON FUNCTION USER_SCHEMA.F_CREATE_USER TO MASTER_RW;
@@ -182,28 +182,28 @@ GRANT EXECUTE ON FUNCTION USER_SCHEMA.F_CREATE_USER TO MASTER_RW;
 ---------------------------------------------------------------
 drop function if exists USER_SCHEMA.F_AUTHENTICATE_USER;
 CREATE OR REPLACE FUNCTION USER_SCHEMA.F_AUTHENTICATE_USER (
-	 EMAIL      VARCHAR
+     EMAIL      VARCHAR
    , KEY_VALUE  VARCHAR
 )
-	RETURNS   VARCHAR
+    RETURNS   VARCHAR
 LANGUAGE PLPGSQL
-	AS 
-	$$
-	--DECLARE AUTHENTICATE VARCHAR;
+    AS 
+    $$
+    --DECLARE AUTHENTICATE VARCHAR;
 BEGIN
 
 IF EXISTS ( SELECT 1 FROM USER_SCHEMA.KEY
-		     WHERE EMAIL_ID = EMAIL
-		       AND KEY = KEY_VALUE
-		       AND CURRENT_TIMESTAMP <= EXPIRY_TIME )
+             WHERE EMAIL_ID = EMAIL
+               AND KEY = KEY_VALUE
+               AND CURRENT_TIMESTAMP <= EXPIRY_TIME )
 
 THEN 
     UPDATE USER_SCHEMA.USER
-	   SET IS_AUTHENTICATED  = TRUE
+       SET IS_AUTHENTICATED  = TRUE
          , ACT_CREATE_DT = CURRENT_DATE
-	     , PWD_EXPIRY_DT = CURRENT_DATE + INTERVAL '1 MONTH'
+         , PWD_EXPIRY_DT = CURRENT_DATE + INTERVAL '1 MONTH'
      WHERE EMAIL_ID = EMAIL;
-	 
+     
      RETURN 'ACCOUNT ACTIVATED';
 
 ELSE
@@ -211,7 +211,7 @@ ELSE
     UPDATE USER_SCHEMA.USER
        SET IS_AUTHENTICATED = FALSE
      WHERE EMAIL_ID = EMAIL 
-	   AND IS_AUTHENTICATED <> TRUE;
+       AND IS_AUTHENTICATED <> TRUE;
      
     RETURN 'FAILED TO AUTHENTICATE USER / ALREADY AUTHENTICATED';
 
@@ -228,14 +228,14 @@ GRANT EXECUTE ON FUNCTION USER_SCHEMA.F_AUTHENTICATE_USER TO MASTER_RW;
 ---------------------------------------------------------------
 drop function if exists USER_SCHEMA.F_CHANGE_PWD;
 CREATE OR REPLACE FUNCTION USER_SCHEMA.F_CHANGE_PWD (
-	 login varchar
+     login varchar
    , new_paswd  varchar
 )
-	RETURNS   VARCHAR
+    RETURNS   VARCHAR
 language plpgsql
-	as 
-	$$
-	--DECLARE AUTHENTICATE VARCHAR;
+    as 
+    $$
+    --DECLARE AUTHENTICATE VARCHAR;
 begin
 
 CASE WHEN EXISTS ( SELECT 1 FROM user_schema.user WHERE login_id = login and password <> new_paswd and is_authenticated = true)
@@ -245,12 +245,12 @@ THEN
      set password = new_paswd
        , pwd_expiry_dt = CURRENT_DATE + INTERVAL '1 MONTH'
      where login_id = login
-	   and is_authenticated = true
+       and is_authenticated = true
       ;
       RETURN 'PASSWORD UPDATED';
 
 WHEN
- 	  EXISTS ( SELECT 1 FROM user_schema.user WHERE login_id = login and password = new_paswd and is_authenticated = true)
+      EXISTS ( SELECT 1 FROM user_schema.user WHERE login_id = login and password = new_paswd and is_authenticated = true)
 THEN
        RETURN 'NEW PASSWORD CANNOT BE SAME AS EXISTING PASSWORD';
 
@@ -325,7 +325,7 @@ THEN
           , NULL                              AS SESSION_END_TIME;
           
       RETURN '1';
-	  
+      
 WHEN EXISTS ( SELECT 1 FROM USER_SCHEMA.USER WHERE LOGIN_ID = LOGIN AND PASSWORD = PASSWD AND IS_AUTHENTICATED = FALSE)
 
 THEN 
@@ -346,7 +346,7 @@ THEN
           , NULL                              AS SESSION_END_TIME;
               
       RETURN '2';
-	  
+      
 WHEN EXISTS ( SELECT 1 FROM USER_SCHEMA.USER WHERE LOGIN_ID = LOGIN AND PASSWORD <> PASSWD )
 
 THEN 
@@ -407,7 +407,7 @@ $$
     select FNAME || ' ' || LNAME
     from user_schema.user
      where pwd_expiry_dt - current_date < 7
-	   and is_authenticated = true
+       and is_authenticated = true
 $$ 
 language sql;
 
@@ -425,14 +425,14 @@ begin
 return query
     select cast(to_char(session_start_time,'yyyy-mm-dd') as date) as login_date , count(1) as count
      from user_schema.log_history h
-	    , user_schema.user u
-	 WHERE h.login_id = u.login_id
+        , user_schema.user u
+     WHERE h.login_id = u.login_id
        and status_code = 0
-	  and extract(year from age(CURRENT_DATE,DOB)) = 18
-	 and (cast(to_char(session_start_time,'hh:mm:ss') as time) <= end_time
+      and extract(year from age(CURRENT_DATE,DOB)) = 18
+     and (cast(to_char(session_start_time,'hh:mm:ss') as time) <= end_time
          or cast(to_char(session_end_time,'hh:mm:ss') as time) >= start_time )
-		 group by cast(to_char(session_start_time,'yyyy-mm-dd') as date);
-		 
+         group by cast(to_char(session_start_time,'yyyy-mm-dd') as date);
+         
 END;
 $$
 LANGUAGE plpgsql;
