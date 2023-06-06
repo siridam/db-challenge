@@ -6,9 +6,10 @@ If using different version and if code is not compatible, kindly let me know. I 
 -------------------------
 
  1. Execute create_db.sql file first
-   - It will create a new database USER_DB.
+   -- It will create a new database USER_DB.
   
 2. please switch to new database USER_DB and then execute execute_code.sql
+   --this would create 3 tables and 7 functions
 
 
 ------------------
@@ -46,6 +47,6 @@ CODE DETAILS
 	  -- This wil lreturn date,number of disticnt users logged
 	  
 	  
---NOTE : This code can be enhanced to improve performance by definining column size and creating indexes if loading huge data.
+--NOTE : This code can be enhanced to save memory and improve performance by definining column size and creating indexes if loading huge data.
 -- Assumed the parameters that come from external sources and coded accordingly.
 -- covered all the main  & most of the required scenarios and ingored few edge case scenarios
