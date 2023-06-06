@@ -23,10 +23,11 @@ CODE DETAILS
 
 --2. to regerate key,
      select  user_schema.f_generate_key(email)
+	 --this would update key table with latest key and increase expiry time by 1 hour 
 	   
---3. If user authenticates with the key within 1 hour,
+--3. when user authenticates with the key ,
     select user_schema.f_authenticate_user(email, key_value)
-  --  user account is marked authenticated (is_authenticate = true in user table with expiry date of 1 month)
+  --  user account is marked authenticated if done in 1 hour(is_authenticate = true in user table with expiry date of 1 month)
 
 --4. To change passwords, 
       select user_schema.f_change_pwd(login, new_paswd)
@@ -38,7 +39,7 @@ CODE DETAILS
 
 --6. To report the users who password is about to expire in 7 days
 	  select user_schema.f_rpt_password_expiry()
-	  
+	  -- displays users 'first_name last_name' who should update their passwords in 1 week
 	  
 --7. To report for given time period parameters a number of distinct users logged into the system each day who is 18 years old (age >=18 years and < 19 years).
       select user_schema.f_rpt_users_logged(start_time, end_time)
@@ -47,3 +48,4 @@ CODE DETAILS
 	  
 --NOTE : This code can be enhanced to improve performance by definining column size and creating indexes if loading huge data.
 -- Assumed the parameters that come from external sources and coded accordingly.
+-- covered all the main  & most of the required scenarios and ingored few edge case scenarios
