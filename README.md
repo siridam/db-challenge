@@ -38,7 +38,7 @@ This would insert record into user_schema.USER and user_schema.key tables and re
       select user_schema.f_log_history(login, passwd)
 	  -- logs into log_history table and returns session_id for succesful login / status_code for failed ones
 	  
-6.To logout from session
+6. To logout from session
       select user_schema.f_logout(login)
 	  -- updates session_end_time in log_history table and returns status message
 
