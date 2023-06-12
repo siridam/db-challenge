@@ -37,12 +37,16 @@ CODE DETAILS
 --5. to log login history
       select user_schema.f_log_history(login, passwd)
 	  -- logs into log_history table and returns session_id for succesful login / status_code for failed ones
+	  
+--6.To logout from session
+      select user_schema.f_logout(login)
+	  -- updates session_end_time in log_history table and returns status message
 
---6. To report the users who password is about to expire in 7 days
+--7. To report the users who password is about to expire in 7 days
 	  select user_schema.f_rpt_password_expiry()
 	  -- displays users 'first_name last_name' who should update their passwords in 1 week
 	  
---7. To report for given time period parameters a number of distinct users logged into the system each day who is 18 years old (age >=18 years and < 19 years).
+--8. To report for given time period parameters a number of distinct users logged into the system each day who is 18 years old (age >=18 years and < 19 years).
       select user_schema.f_rpt_users_logged(start_time, end_time)
 	  -- This wil lreturn date,number of disticnt users logged
 	  
