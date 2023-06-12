@@ -286,7 +286,7 @@ WHEN EXISTS ( SELECT 1 FROM USER_SCHEMA.USER WHERE LOGIN_ID = LOGIN AND PASSWORD
 
 THEN 
       INSERT INTO USER_SCHEMA.LOG_HISTORY ( LOGIN_ID
-                                          , LOGIN_STATUS
+                                          , STATUS
                                           , STATUS_CODE
                                           , ERROR_DESCRIPTION
                                           , SESSION_ID
@@ -294,7 +294,7 @@ THEN
                                           , SESSION_END_TIME
                                           )
      SELECT LOGIN                             AS LOGIN_ID
-          , 'SUCCESS'                         AS LOGIN_STATUS
+          , 'SUCCESS'                         AS STATUS
           , '0'                               AS STATUS_CODE
           , NULL                              AS ERROR_DESCRIPTION
           , PID                               AS SESSION_ID
@@ -309,7 +309,7 @@ WHEN EXISTS ( SELECT 1 FROM USER_SCHEMA.USER WHERE LOGIN_ID = LOGIN AND PASSWORD
 
 THEN 
      INSERT INTO USER_SCHEMA.LOG_HISTORY ( LOGIN_ID
-                       , LOGIN_STATUS
+                       , STATUS
                        , STATUS_CODE
                        , ERROR_DESCRIPTION
                        , SESSION_ID
@@ -317,7 +317,7 @@ THEN
                        , SESSION_END_TIME
                        )
      SELECT LOGIN                             AS LOGIN_ID
-          , 'FAIL'                            AS LOGIN_STATUS
+          , 'FAIL'                            AS STATUS
           , '1'                               AS STATUS_CODE
           , 'ACCOUNT IS INACTIVE'             AS ERROR_DESCRIPTION
           , NULL                              AS SESSION_ID
@@ -330,7 +330,7 @@ WHEN EXISTS ( SELECT 1 FROM USER_SCHEMA.USER WHERE LOGIN_ID = LOGIN AND PASSWORD
 
 THEN 
      INSERT INTO USER_SCHEMA.LOG_HISTORY ( LOGIN_ID
-                       , LOGIN_STATUS
+                       , STATUS
                        , STATUS_CODE
                        , ERROR_DESCRIPTION
                        , SESSION_ID
@@ -338,7 +338,7 @@ THEN
                        , SESSION_END_TIME
                        )
      SELECT LOGIN                             AS LOGIN_ID
-          , 'FAIL'                            AS LOGIN_STATUS
+          , 'FAIL'                            AS STATUS
           , '2'                               AS STATUS_CODE
           , 'ACCOUNT NOT AUTHENTICATED'       AS ERROR_DESCRIPTION
           , NULL                              AS SESSION_ID
@@ -351,7 +351,7 @@ WHEN EXISTS ( SELECT 1 FROM USER_SCHEMA.USER WHERE LOGIN_ID = LOGIN AND PASSWORD
 
 THEN 
      INSERT INTO USER_SCHEMA.LOG_HISTORY ( LOGIN_ID
-                       , LOGIN_STATUS
+                       , STATUS
                        , STATUS_CODE
                        , ERROR_DESCRIPTION
                        , SESSION_ID
@@ -359,7 +359,7 @@ THEN
                        , SESSION_END_TIME
                        )
      SELECT LOGIN                             AS LOGIN_ID
-          , 'FAIL'                            AS LOGIN_STATUS
+          , 'FAIL'                            AS STATUS
           , '3'                               AS STATUS_CODE
           , 'PASSWORD IS WRONG'               AS ERROR_DESCRIPTION
           , NULL                              AS SESSION_ID
@@ -372,7 +372,7 @@ when EXISTS ( SELECT 1 FROM USER_SCHEMA.USER WHERE LOGIN_ID <> LOGIN  )
 
 THEN 
      INSERT INTO USER_SCHEMA.LOG_HISTORY ( LOGIN_ID
-                                         , LOGIN_STATUS
+                                         , STATUS
                                          , STATUS_CODE
                                          , ERROR_DESCRIPTION
                                          , SESSION_ID
@@ -380,7 +380,7 @@ THEN
                                          , SESSION_END_TIME
                                          )
      SELECT LOGIN                             AS LOGIN_ID
-          , 'FAIL'                            AS LOGIN_STATUS
+          , 'FAIL'                            AS STATUS
           , '4'                               AS STATUS_CODE
           , 'NO SUCH USER EXISTS IN DB'       AS ERROR_DESCRIPTION
           , NULL                              AS SESSION_ID
